@@ -1,5 +1,6 @@
 variable "profile" {
-  type = string
+  type    = string
+  default = "dev"
 }
 variable "region" {
   type    = string
