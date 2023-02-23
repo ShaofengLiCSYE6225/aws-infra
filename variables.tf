@@ -14,3 +14,6 @@ variable "key_pair_id" {
   type = string
 }
 
+variable "ami_id" {
+  type = string
+}
