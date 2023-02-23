@@ -57,7 +57,7 @@ resource "aws_security_group" "web_sg" {
   }
 }
 resource "aws_instance" "ec2" {
-  ami                         = data.aws_ami.webapp_ami.id
+  ami                         = var.ami_id
   instance_type               = "t2.micro"
   disable_api_termination     = false
   subnet_id                   = module.dev.public_subnet.*.id[0]
