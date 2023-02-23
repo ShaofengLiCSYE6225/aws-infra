@@ -1,12 +1,16 @@
 variable "profile" {
-  type    = string
-  default = "dev"
+  type = string
+
 }
 variable "region" {
-  type    = string
-  default = "us-east-1"
+  type = string
+
 }
 variable "cidr" {
-  type    = string
-  default = "10.0.0.0/16"
+  type = string
+
 }
+variable "key_pair_id" {
+  type = string
+}
+
