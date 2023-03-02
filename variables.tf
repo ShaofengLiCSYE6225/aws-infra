@@ -10,8 +10,9 @@ variable "cidr" {
   type = string
 
 }
-variable "key_pair_id" {
-  type = string
+variable "key_name" {
+  type    = string
+  default = "ec2"
 }
 
 variable "ami_id" {
