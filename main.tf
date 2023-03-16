@@ -6,6 +6,14 @@ data "aws_ami" "webapp_ami" {
   name_regex  = "csye6225-*"
   most_recent = true
 }
+
+resource "aws_route53_record" "dev" {
+  zone_id = var.route_zone_id
+  name    = var.route_name
+  ttl     = 60
+  type    = "A"
+  records = [aws_instance.ec2.public_ip]
+}
 resource "aws_iam_instance_profile" "CSYE6225" {
   name = "instance_profile"
   role = aws_iam_role.EC2-CSYE6225.name
@@ -67,12 +75,10 @@ resource "aws_security_group" "database" {
   description = "allow on port 3000"
   vpc_id      = module.dev.vpc_id
   ingress {
-    from_port        = 3306
-    to_port          = 3306
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-    security_groups  = [aws_security_group.web_sg.id]
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.web_sg.id]
   }
   egress {
     from_port        = 0
@@ -118,7 +124,7 @@ resource "aws_db_instance" "csye6225" {
   engine_version         = "5.7"
   instance_class         = "db.t3.micro"
   username               = "csye6225"
-  password               = "Lsf12345678!"
+  password               = var.db_password
   parameter_group_name   = aws_db_parameter_group.mysql.name
   identifier             = "csye6225"
   skip_final_snapshot    = true
@@ -144,42 +150,36 @@ resource "aws_security_group" "web_sg" {
     to_port          = 3000
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
   }
   ingress {
     from_port        = 443
     to_port          = 443
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
   }
   ingress {
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
   }
   ingress {
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
   }
   ingress {
     from_port        = 3306
     to_port          = 3306
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
   }
   egress {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
   }
 }
 resource "aws_instance" "ec2" {
