@@ -18,7 +18,7 @@ resource "aws_iam_instance_profile" "CSYE6225" {
   name = "instance_profile"
   role = aws_iam_role.EC2-CSYE6225.name
 }
-resource "aws_iam_policy" "policy" {
+resource "aws_iam_policy" "policyone" {
   name = "WebAppS3"
   policy = jsonencode(
     {
@@ -41,7 +41,12 @@ resource "aws_iam_policy" "policy" {
 }
 resource "aws_iam_role_policy_attachment" "attachment" {
   role       = aws_iam_role.EC2-CSYE6225.name
-  policy_arn = aws_iam_policy.policy.arn
+  policy_arn = aws_iam_policy.policyone.arn
+}
+
+resource "aws_iam_role_policy_attachment" "policy" {
+  role       = aws_iam_role.EC2-CSYE6225.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
 resource "aws_iam_role" "EC2-CSYE6225" {
   name = "EC2-CSYE6225"
@@ -203,6 +208,11 @@ resource "aws_instance" "ec2" {
   echo "AWS_BUCKET_NAME=${aws_s3_bucket.bucket.bucket}" >> /home/ec2-user/.env 
   echo "AWS_BUCKET_REGION=${var.region}" >> /home/ec2-user/.env 
   mv /home/ec2-user/.env /home/ec2-user/webapp/.env
+  sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+    -a fetch-config \
+    -m ec2 \
+    -c file:/tmp/cloudwatchconfig.json \
+    -s
   EOF
   root_block_device {
     volume_size = 50
