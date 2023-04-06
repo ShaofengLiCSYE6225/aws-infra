@@ -30,8 +30,8 @@ resource "aws_lb_target_group" "alb_tg" {
   name        = "csye6225-lb-alb-tg"
   target_type = "instance"
   port        = 3000
-  protocol = "HTTP"
-  vpc_id = module.dev.vpc_id
+  protocol    = "HTTP"
+  vpc_id      = module.dev.vpc_id
   health_check {
     port     = 3000
     protocol = "HTTP"
@@ -66,13 +66,13 @@ resource "aws_launch_template" "lt" {
 
 }
 resource "aws_autoscaling_group" "asg" {
-  name             = "csye6225-asg-spring2023"
-  default_cooldown = 60
-  max_size         = 3
-  min_size         = 1
-  desired_capacity = 1
-vpc_zone_identifier = module.dev.public_subnet.*.id 
-target_group_arns = [aws_lb_target_group.alb_tg.arn]
+  name                = "csye6225-asg-spring2023"
+  default_cooldown    = 60
+  max_size            = 3
+  min_size            = 1
+  desired_capacity    = 1
+  vpc_zone_identifier = module.dev.public_subnet.*.id
+  target_group_arns   = [aws_lb_target_group.alb_tg.arn]
   launch_template {
     id      = aws_launch_template.lt.id
     version = "$Latest"
@@ -275,16 +275,16 @@ resource "aws_security_group" "web_sg" {
   description = "allow on port 3000"
   vpc_id      = module.dev.vpc_id
   ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
+    from_port       = 3000
+    to_port         = 3000
+    protocol        = "tcp"
     security_groups = [aws_security_group.lb_sg.id]
   }
 
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
     security_groups = [aws_security_group.lb_sg.id]
   }
   egress {
@@ -340,14 +340,14 @@ resource "aws_lb" "load_balancer" {
 resource "aws_security_group" "lb_sg" {
   name        = "load_balancer_sg"
   description = "lb security group"
-  vpc_id = module.dev.vpc_id
+  vpc_id      = module.dev.vpc_id
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
- ingress {
+  ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
